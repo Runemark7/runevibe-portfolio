@@ -523,22 +523,6 @@ a:hover > .rv-arrow--out {
   row-gap: clamp(1.5rem, 3vw, 2.5rem);
 }
 
-.rv-eyebrow {
-  grid-column: 1 / -1;
-  display: flex;
-  gap: 0.6rem;
-  font-family: var(--rv-mono);
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--rv-muted);
-}
-
-.rv-eyebrow span[aria-hidden] {
-  color: var(--rv-accent);
-}
-
 .rv-hero-name {
   grid-column: 1 / -1;
   margin: 0;
@@ -1751,36 +1735,28 @@ a:hover > .rv-arrow--out {
 }
 
 .rv-footer-inner {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  column-gap: var(--rv-col-gap);
-  row-gap: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem 2rem;
   padding-block: clamp(2rem, 4vw, 3rem);
 }
 
 .rv-footer-name {
-  grid-column: 1 / span 8;
-  font-size: clamp(2rem, 5vw, 3.75rem);
+  font-size: clamp(1.75rem, 4vw, 3rem);
   font-weight: 800;
   line-height: 0.95;
   letter-spacing: -0.05em;
 }
 
-.rv-footer-line {
-  grid-column: 1 / span 7;
-  color: var(--rv-ink-2);
-  max-width: 40ch;
-}
-
 .rv-footer-links {
-  grid-column: 9 / -1;
-  grid-row: 1 / span 2;
-  align-self: end;
-  justify-self: end;
   list-style: none;
   padding: 0;
-  display: grid;
-  gap: 0.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1.5rem;
   font-family: var(--rv-mono);
   font-size: 0.8125rem;
   font-weight: 500;
@@ -1790,14 +1766,7 @@ a:hover > .rv-arrow--out {
   text-decoration: none;
 }
 
-.rv-colophon {
-  grid-column: 1 / -1;
-  margin-top: 2rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--rv-line);
-  font-family: var(--rv-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.02em;
+.rv-footer-year {
   color: var(--rv-muted);
 }
 
@@ -1879,10 +1848,7 @@ a:hover > .rv-arrow--out {
   .rv-agents-block > .rv-fleet,
   .rv-entry-aside,
   .rv-facts--side,
-  .rv-prose,
-  .rv-footer-name,
-  .rv-footer-line,
-  .rv-footer-links {
+  .rv-prose {
     grid-column: 1 / -1;
     grid-row: auto;
   }
@@ -1911,13 +1877,6 @@ a:hover > .rv-arrow--out {
   .rv-spec-row dt,
   .rv-spec-row dd {
     grid-column: 1 / -1;
-  }
-
-  .rv-footer-links {
-    justify-self: start;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.5rem;
   }
 
   .rv-shots--detail > .rv-shot-secondary {

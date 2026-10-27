@@ -34,7 +34,7 @@ export function ProjectPage() {
       <section className="rv-wrap rv-missing">
         <p className="rv-missing-code">404</p>
         <h1 className="rv-missing-title">Project not found</h1>
-        <p>That slug is not one of the featured projects.</p>
+        <p>There is no project at this address.</p>
         <p>
           <TextLink href="/#projects" arrow="left">
             All projects
