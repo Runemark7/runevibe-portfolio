@@ -1,0 +1,81 @@
+## Backend API
+backend:
+  image:
+    repository: ghcr.io/runemark7/runevibe-portfolio-api
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicas: 1
+  port: 8080
+  env:
+    PORT: "8080"
+    MIGRATIONS_PATH: "file:///migrations"
+    CORS_ALLOWED_ORIGIN: "http://localhost:5173"
+    GOMEMLIMIT: "96MiB"
+  resources:
+    requests:
+      cpu: 25m
+      memory: 32Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65532
+    runAsGroup: 65532
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: 8080
+    initialDelaySeconds: 10
+    periodSeconds: 15
+  readinessProbe:
+    httpGet:
+      path: /readyz
+      port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 10
+
+## Frontend
+frontend:
+  image:
+    repository: ghcr.io/runemark7/runevibe-portfolio-frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicas: 1
+  port: 8080
+  resources:
+    requests:
+      cpu: 10m
+      memory: 16Mi
+    limits:
+      cpu: 100m
+      memory: 64Mi
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 101
+    runAsGroup: 101
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop: ["ALL"]
+
+## Ingress
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    - runevibe.se
+    - www.runevibe.se
+  tlsSecretName: runevibe-portfolio-tls
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+
+## Secret that already exists in the namespace. Key: DATABASE_URL.
+## The value is not stored in this chart.
+dbSecretName: runevibe-portfolio-db

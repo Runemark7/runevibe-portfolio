@@ -1,0 +1,347 @@
+openapi: 3.0.3
+info:
+  title: Runevibe Portfolio API
+  version: 0.1.0
+  description: |
+    Read-only API for Alexander Runemark's portfolio (runevibe.se).
+    Content is stored in PostgreSQL and seeded by migrations.
+    This document is the source of truth for the Go server types and the
+    TypeScript client. Do not hand-edit generated code.
+servers:
+  - url: /
+tags:
+  - name: meta
+  - name: portfolio
+paths:
+  /healthz:
+    get:
+      operationId: getHealthz
+      tags: [meta]
+      summary: Liveness probe
+      responses:
+        "200":
+          description: The process is serving requests.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+  /readyz:
+    get:
+      operationId: getReadyz
+      tags: [meta]
+      summary: Readiness probe
+      responses:
+        "200":
+          description: The database is reachable.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+        "503":
+          description: The database is not reachable.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+  /api/v1/profile:
+    get:
+      operationId: getProfile
+      tags: [portfolio]
+      summary: Public profile
+      responses:
+        "200":
+          description: The profile shown in the hero.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+  /api/v1/projects:
+    get:
+      operationId: listProjects
+      tags: [portfolio]
+      summary: Featured projects in display order
+      responses:
+        "200":
+          description: Featured projects, lowest sortOrder first.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectList"
+  /api/v1/projects/{slug}:
+    get:
+      operationId: getProject
+      tags: [portfolio]
+      summary: One featured project
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The project.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "404":
+          description: No featured project has this slug.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/v1/skills:
+    get:
+      operationId: listSkills
+      tags: [portfolio]
+      summary: Skills with the projects that use them
+      responses:
+        "200":
+          description: Skills in catalog order, with usage derived from project links.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SkillList"
+  /api/v1/workflow:
+    get:
+      operationId: getWorkflow
+      tags: [portfolio]
+      summary: Agent fleet and coding workflow
+      responses:
+        "200":
+          description: Agents and the ordered coding workflow.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workflow"
+  /api/v1/infra:
+    get:
+      operationId: listInfra
+      tags: [portfolio]
+      summary: High-level infrastructure notes
+      responses:
+        "200":
+          description: Public infrastructure notes. No hosts, addresses, or secrets.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InfraList"
+components:
+  schemas:
+    Health:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ok, unavailable]
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+    Profile:
+      type: object
+      required: [name, headline, summary, githubUrl]
+      properties:
+        name:
+          type: string
+        headline:
+          type: string
+        summary:
+          type: string
+        githubUrl:
+          type: string
+          format: uri
+        linkedinUrl:
+          type: string
+          format: uri
+          nullable: true
+          description: Null until a public LinkedIn URL is provided. Clients must not invent one.
+    ProjectKind:
+      type: string
+      enum: [flagship, main, standard, smaller]
+    ProjectVisibility:
+      type: string
+      enum: [public, private]
+    Fact:
+      type: object
+      required: [label, value]
+      properties:
+        label:
+          type: string
+        value:
+          type: string
+    Credit:
+      type: object
+      required: [name, url, license]
+      properties:
+        name:
+          type: string
+        url:
+          type: string
+          format: uri
+        license:
+          type: string
+    Project:
+      type: object
+      required: [slug, name, summary, body, kind, visibility, sortOrder, facts]
+      properties:
+        slug:
+          type: string
+        name:
+          type: string
+        summary:
+          type: string
+        body:
+          type: string
+          description: Plain text. Paragraphs are separated by a blank line.
+        kind:
+          $ref: "#/components/schemas/ProjectKind"
+        visibility:
+          $ref: "#/components/schemas/ProjectVisibility"
+        sortOrder:
+          type: integer
+          minimum: 1
+        liveUrl:
+          type: string
+          format: uri
+          nullable: true
+        repoUrl:
+          type: string
+          format: uri
+          nullable: true
+          description: Null when the repository is private or there is no public repository.
+        credit:
+          allOf:
+            - $ref: "#/components/schemas/Credit"
+          nullable: true
+        facts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Fact"
+    ProjectList:
+      type: object
+      required: [projects]
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: "#/components/schemas/Project"
+    Usage:
+      type: object
+      required: [projectSlug, projectName]
+      properties:
+        projectSlug:
+          type: string
+        projectName:
+          type: string
+    Skill:
+      type: object
+      required: [slug, name, summary, category, basis, sortOrder, usages, projectCount, usedOften]
+      properties:
+        slug:
+          type: string
+        name:
+          type: string
+        summary:
+          type: string
+        category:
+          type: string
+        basis:
+          type: string
+          enum: [projects, daily_driver]
+          description: |
+            projects means the standing comes from featured-project usages.
+            daily_driver is the everyday desktop and has no project link.
+        sortOrder:
+          type: integer
+          minimum: 1
+        usages:
+          type: array
+          items:
+            $ref: "#/components/schemas/Usage"
+        projectCount:
+          type: integer
+          minimum: 0
+          description: Number of featured projects that use this skill. Derived from usages.
+        usedOften:
+          type: boolean
+          description: True when projectCount is at least usedOftenMinProjects.
+    SkillList:
+      type: object
+      required: [skills, usedOftenMinProjects]
+      properties:
+        skills:
+          type: array
+          items:
+            $ref: "#/components/schemas/Skill"
+        usedOftenMinProjects:
+          type: integer
+          minimum: 1
+          description: Domain threshold. A skill is used often at or above this many featured projects.
+    Agent:
+      type: object
+      required: [slug, name, owns, summary, sortOrder]
+      properties:
+        slug:
+          type: string
+        name:
+          type: string
+        owns:
+          type: string
+        summary:
+          type: string
+        sortOrder:
+          type: integer
+          minimum: 1
+    WorkflowStep:
+      type: object
+      required: [slug, name, summary, sortOrder]
+      properties:
+        slug:
+          type: string
+        name:
+          type: string
+        summary:
+          type: string
+        sortOrder:
+          type: integer
+          minimum: 1
+    Workflow:
+      type: object
+      required: [summary, agents, steps]
+      properties:
+        summary:
+          type: string
+        agents:
+          type: array
+          items:
+            $ref: "#/components/schemas/Agent"
+        steps:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkflowStep"
+    InfraNote:
+      type: object
+      required: [slug, title, summary, sortOrder]
+      properties:
+        slug:
+          type: string
+        title:
+          type: string
+        summary:
+          type: string
+        sortOrder:
+          type: integer
+          minimum: 1
+    InfraList:
+      type: object
+      required: [notes]
+      properties:
+        notes:
+          type: array
+          items:
+            $ref: "#/components/schemas/InfraNote"

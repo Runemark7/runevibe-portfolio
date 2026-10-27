@@ -1,0 +1,9 @@
+DELETE FROM infra_notes;
+DELETE FROM site_copy;
+DELETE FROM workflow_steps;
+DELETE FROM agents;
+DELETE FROM skill_usages;
+DELETE FROM skills;
+DELETE FROM project_facts;
+DELETE FROM projects;
+DELETE FROM profile;

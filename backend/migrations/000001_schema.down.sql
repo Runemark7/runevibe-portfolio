@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS site_copy;
+DROP TABLE IF EXISTS infra_notes;
+DROP TABLE IF EXISTS workflow_steps;
+DROP TABLE IF EXISTS agents;
+DROP TABLE IF EXISTS skill_usages;
+DROP TABLE IF EXISTS skills;
+DROP TABLE IF EXISTS project_facts;
+DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS profile;
