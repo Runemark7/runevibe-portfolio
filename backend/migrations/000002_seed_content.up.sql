@@ -120,19 +120,19 @@ INSERT INTO project_facts (project_slug, sort_order, label, value) VALUES
 
 INSERT INTO skills (slug, name, summary, category, basis, sort_order) VALUES
     ('go', 'Go', 'Backend language.', 'language', 'projects', 1),
-    ('typescript-react', 'TypeScript/React', 'TypeScript user interfaces, including React apps.', 'language', 'projects', 2),
+    ('typescript-react', 'TypeScript/React', 'TypeScript user interfaces, including React apps.', 'frontend', 'projects', 2),
     ('python', 'Python', 'Application and research language.', 'language', 'projects', 3),
     ('postgresql', 'PostgreSQL', 'Relational database.', 'data', 'projects', 4),
-    ('docker', 'Docker', 'Container images.', 'platform', 'projects', 5),
-    ('k3s', 'k3s/Kubernetes', 'Kubernetes distribution used for the cluster.', 'platform', 'projects', 6),
-    ('helm', 'Helm', 'Kubernetes package manager.', 'delivery', 'projects', 7),
-    ('argocd', 'Argo CD GitOps', 'GitOps controller for Helm releases.', 'delivery', 'projects', 8),
-    ('cert-manager', 'cert-manager', 'Certificate controller for Let''s Encrypt on the cluster.', 'delivery', 'projects', 9),
-    ('github-actions', 'GitHub Actions', 'Continuous integration.', 'delivery', 'projects', 10),
-    ('openapi', 'OpenAPI-first', 'API contract as the source of generated types.', 'practice', 'projects', 11),
-    ('hexagonal', 'hexagonal architecture', 'Domain core isolated behind ports and adapters.', 'practice', 'projects', 12),
-    ('n8n', 'n8n', 'Workflow automation.', 'tooling', 'projects', 13),
-    ('llm', 'LLM integrations', 'Swappable language models for extraction, scoring, or labelling.', 'tooling', 'projects', 14),
+    ('docker', 'Docker', 'Container images.', 'infra', 'projects', 5),
+    ('k3s', 'k3s/Kubernetes', 'Kubernetes distribution used for the cluster.', 'infra', 'projects', 6),
+    ('helm', 'Helm', 'Kubernetes package manager.', 'infra', 'projects', 7),
+    ('argocd', 'Argo CD GitOps', 'GitOps controller for Helm releases.', 'infra', 'projects', 8),
+    ('cert-manager', 'cert-manager', 'Certificate controller for Let''s Encrypt on the cluster.', 'infra', 'projects', 9),
+    ('github-actions', 'GitHub Actions', 'Continuous integration.', 'infra', 'projects', 10),
+    ('openapi', 'OpenAPI-first', 'API contract as the source of generated types.', 'architecture', 'projects', 11),
+    ('hexagonal', 'hexagonal architecture', 'Domain core isolated behind ports and adapters.', 'architecture', 'projects', 12),
+    ('n8n', 'n8n', 'Workflow automation.', 'ai', 'projects', 13),
+    ('llm', 'LLM integrations', 'Swappable language models for extraction, scoring, or labelling.', 'ai', 'projects', 14),
     ('arch', 'Arch Linux', 'Daily desktop.', 'desktop', 'daily_driver', 15);
 
 INSERT INTO skill_usages (skill_slug, project_slug) VALUES
