@@ -9,12 +9,13 @@ Read `GLOSSARY.md` before naming a domain concept. Use its words in code, API fi
 - Change the API by editing `api/openapi.yaml`, then run `make generate`. Do not hand-edit `backend/internal/adapters/http/openapi/server.gen.go` or `frontend/src/api/schema.d.ts`.
 - Only `frontend/src/ui/` may import `@patternfly/*`. Pages and features import `src/ui`.
 - Visual tokens are the `--rv-*` variables in `frontend/src/ui/styles.css`; PatternFly tokens point at them. One accent colour, Schibsted Grotesk and IBM Plex Mono only, self-hosted in `frontend/public/fonts` (OFL). No gradients or glass.
+- No colophon or self-referential filler: no font credits, "built with", "designed by", "this site", or process notes in public copy. The footer is name, GitHub, LinkedIn when set, and the year.
 - Project screenshots live in `frontend/public/projects` as WebP at full and half width, mapped per slug in `features/portfolio/media.ts`. Capture them from the live sites; never show P&L, win rates, or worker hostnames. DealRadar gets a schematic, not a fake screenshot.
 
 ## Content
 
 - Portfolio claims, numbers, and links come from the seed migration. Do not invent metrics, years, proficiency bars, live URLs, or repository URLs.
-- Featured projects are only Riksdagskollen, DealRadar, Paper Trading Bot, Warehouse, and the Halmstad homes map, in that order.
+- Featured projects are only Riksdagskollen, DealRadar, Paper Trading Bot, and the Halmstad homes map, in that order. Warehouse is not featured; do not add it back.
 - Private projects have no repository link. Do not add one.
 - The LinkedIn URL stays null until a real URL is provided. Do not guess it.
 - Do not put hostnames, IP addresses, or credentials in the repo. Production database access is `DATABASE_URL` from the environment or the Kubernetes Secret named in the Helm values.

@@ -1,7 +1,7 @@
 import { useEffect, type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import type { Profile } from "../api/types";
-import { Arrow, LinkedInPlaceholder, Mark, TextLink, ThemeToggle } from "./components";
+import { LinkedInPlaceholder, Mark, TextLink, ThemeToggle } from "./components";
 
 const NAV = [
   { id: "projects", index: "01", label: "Work" },
@@ -56,7 +56,7 @@ export function AppShell({
   const onHome = location.pathname === "/";
 
   return (
-    <div className="rv-root" id="top">
+    <div className="rv-root">
       <a className="rv-skip" href="#content">
         Skip to content
       </a>
@@ -101,7 +101,6 @@ export function AppShell({
         <footer className="rv-footer">
           <div className="rv-wrap rv-footer-inner">
             <p className="rv-footer-name">{name}</p>
-            {profile?.headline ? <p className="rv-footer-line">{profile.headline}</p> : null}
             <ul className="rv-footer-links">
               <li>
                 <TextLink href={github} external arrow="out">
@@ -113,14 +112,8 @@ export function AppShell({
                   <LinkedInPlaceholder url={profile.linkedinUrl} />
                 </li>
               ) : null}
-              <li>
-                <a className="rv-link rv-link--arrow" href="#top">
-                  <span>Back to top</span>
-                  <Arrow direction="up" />
-                </a>
-              </li>
+              <li className="rv-footer-year">© {new Date().getFullYear()}</li>
             </ul>
-            <p className="rv-colophon">Set in Schibsted Grotesk and IBM Plex Mono. Built with Go, React, and an OpenAPI contract.</p>
           </div>
         </footer>
       ) : null}

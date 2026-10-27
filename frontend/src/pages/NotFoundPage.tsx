@@ -7,7 +7,7 @@ export function NotFoundPage() {
       <h1 className="rv-missing-title">Page not found</h1>
       <p>
         <TextLink href="/" arrow="left">
-          Back to the portfolio
+          Back to the home page
         </TextLink>
       </p>
     </section>

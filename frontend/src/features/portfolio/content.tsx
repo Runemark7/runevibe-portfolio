@@ -4,7 +4,6 @@ import {
   ButtonLink,
   Frame,
   LinkedInPlaceholder,
-  PhoneFrame,
   Sheet,
   TextLink,
   Toggle,
@@ -62,11 +61,6 @@ export function Hero({
   return (
     <section className="rv-hero" aria-labelledby="hero-title">
       <div className="rv-wrap rv-hero-grid">
-        <p className="rv-eyebrow">
-          <span>Portfolio</span>
-          <span aria-hidden="true">/</span>
-          <span>runevibe.se</span>
-        </p>
         <h1 id="hero-title" className="rv-hero-name">
           {words.map((word, index) => (
             <span key={`${word}-${index}`} className="rv-hero-word">
@@ -241,7 +235,6 @@ function ProjectMedia({
           className="rv-shot-secondary"
         />
       ) : null}
-      {media.phone ? <PhoneFrame image={media.phone} className="rv-shot-phone" /> : null}
     </div>
   );
 }
@@ -435,8 +428,7 @@ export function SkillMatrix({
         <div className="rv-often-label">
           <h3 className="rv-subhead">Used often</h3>
           <p className="rv-note">
-            Linked to at least {usedOftenMinProjects} of the {total} projects. Larger type means more projects. There
-            is no score and no years.
+            Used in at least {usedOftenMinProjects} of the {total} projects. Larger type means more projects.
           </p>
         </div>
         <ul className="rv-often" aria-label="Used often">
