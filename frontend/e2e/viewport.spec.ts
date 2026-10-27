@@ -9,12 +9,29 @@ const projects = ["Riksdagskollen", "DealRadar", "Paper Trading Bot", "Warehouse
     kind: index === 0 ? "flagship" : "standard",
     visibility: "public",
     sortOrder: index + 1,
-    liveUrl: null,
+    liveUrl: index === 1 ? null : `https://${index}.example.test`,
     repoUrl: null,
     credit: null,
-    facts: [],
+    facts: [{ label: "Individual member votes", value: "3,957,311 as of 2026-10-24 (about 4 million)" }],
   }),
 );
+
+const agents = ["Chief of Staff", "Paper Trader", "Democracy Tracker", "Warehouse", "Apartment Finder", "Parking watcher", "Portfolio"].map(
+  (name, index) => ({
+    slug: index === 0 ? "chief-of-staff" : name.toLowerCase().replace(/\s+/g, "-"),
+    name,
+    owns: index === 0 ? "The fleet" : name,
+    summary: index === 0 ? "Coordinates the other agents." : `Owns ${name}.`,
+    sortOrder: index + 1,
+  }),
+);
+
+const steps = ["grill-me", "to-spec", "to-tickets", "implement-tdd", "code-review", "pr"].map((slug, index) => ({
+  slug,
+  name: slug === "implement-tdd" ? "implement/tdd" : slug,
+  summary: "Cursor cloud agents open the pull request. A code review, by Alexander or a review agent, happens before merge.",
+  sortOrder: index + 1,
+}));
 
 test("document width matches the viewport at 390px", async ({ page }) => {
   await page.route("**/api/v1/**", async (route) => {
@@ -46,6 +63,17 @@ test("document width matches the viewport at 390px", async ({ page }) => {
             })),
           },
           {
+            slug: "typescript-react",
+            name: "TypeScript/React",
+            summary: "TypeScript user interfaces, including React apps.",
+            category: "frontend",
+            basis: "projects",
+            sortOrder: 2,
+            projectCount: 5,
+            usedOften: true,
+            usages: projects.map((project) => ({ projectSlug: project.slug, projectName: project.name })),
+          },
+          {
             slug: "arch",
             name: "Arch Linux",
             summary: "Daily desktop.",
@@ -60,10 +88,8 @@ test("document width matches the viewport at 390px", async ({ page }) => {
       },
       "/api/v1/workflow": {
         summary: "Each pull request gets a code review before merge.",
-        agents: [
-          { slug: "portfolio", name: "Portfolio", owns: "This portfolio", summary: "Owns this site.", sortOrder: 1 },
-        ],
-        steps: [{ slug: "pr", name: "pr", summary: "A code review happens before merge.", sortOrder: 1 }],
+        agents,
+        steps,
       },
       "/api/v1/infra": {
         notes: [{ slug: "k3s", title: "k3s", summary: "Single-node k3s on Hetzner.", sortOrder: 1 }],
@@ -80,6 +106,8 @@ test("document width matches the viewport at 390px", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1, name: "Alexander Runemark" })).toBeVisible();
   await expect(page.getByText("Daily driver")).toBeVisible();
+  await expect(page.getByRole("link", { name: /See the work/ })).toBeVisible();
+  await expect(page.getByRole("list", { name: "Coding workflow" }).getByRole("listitem")).toHaveCount(6);
   await expect(page.getByText("TODO")).toHaveCount(0);
   await expect(page.getByRole("link", { name: /LinkedIn/ })).toHaveCount(0);
 

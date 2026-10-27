@@ -12,9 +12,10 @@ export function HomePage() {
   }
   return (
     <>
-      <Hero profile={portfolio.profile} />
+      <Hero profile={portfolio.profile} projects={portfolio.projects} workflow={portfolio.workflow} />
       <Section
         id="projects"
+        index="01"
         kicker="Work"
         title="Projects"
         intro="Five projects, in the order they should be read. Private repositories are not linked."
@@ -23,9 +24,10 @@ export function HomePage() {
       </Section>
       <Section
         id="skills"
+        index="02"
         kicker="Practice"
-        title="What I use, and what I know"
-        intro="Used often is derived from the projects above. Nothing here is a percentage or a count of years."
+        title="What I use, weighted by the work"
+        intro="Every skill is tied to the projects above that use it. Nothing here is a percentage or a count of years."
       >
         <SkillMatrix
           skills={portfolio.skills.skills}
@@ -33,15 +35,10 @@ export function HomePage() {
           usedOftenMinProjects={portfolio.skills.usedOftenMinProjects}
         />
       </Section>
-      <Section id="workflows" kicker="Assistants" title="AI workflows">
+      <Section id="workflows" index="03" kicker="Agents" title="AI workflows" intro={portfolio.workflow.summary}>
         <WorkflowDiagram workflow={portfolio.workflow} />
       </Section>
-      <Section
-        id="infra"
-        kicker="Hosting"
-        title="Infrastructure"
-        intro="The shape of the setup. No addresses."
-      >
+      <Section id="infra" index="04" kicker="Hosting" title="Infrastructure" intro="Where the projects above run.">
         <InfraList notes={portfolio.infra} />
       </Section>
     </>

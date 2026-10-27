@@ -5,6 +5,6 @@
     if (dark) document.documentElement.classList.add("pf-v6-theme-dark");
     document.documentElement.dataset.theme = dark ? "dark" : "light";
     var theme = document.querySelector('meta[name="theme-color"]');
-    if (theme) theme.setAttribute("content", dark ? "#101412" : "#f3efe6");
+    if (theme) theme.setAttribute("content", dark ? "#10100e" : "#f4f2ec");
   } catch (e) {}
 })();

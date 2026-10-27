@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { ErrorNote, Loading } from "../ui";
+import { ErrorNote, Loading, TextLink } from "../ui";
 import { ProjectDetail } from "../features/portfolio/content";
 import { usePortfolio } from "../features/portfolio/state";
 
@@ -31,9 +31,15 @@ export function ProjectPage() {
   }
   if (!project) {
     return (
-      <section className="rv-section">
-        <h1 className="rv-heading rv-heading--title">Project not found</h1>
+      <section className="rv-wrap rv-missing">
+        <p className="rv-missing-code">404</p>
+        <h1 className="rv-missing-title">Project not found</h1>
         <p>That slug is not one of the featured projects.</p>
+        <p>
+          <TextLink href="/#projects" arrow="left">
+            All projects
+          </TextLink>
+        </p>
       </section>
     );
   }

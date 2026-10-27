@@ -8,6 +8,8 @@ Read `GLOSSARY.md` before naming a domain concept. Use its words in code, API fi
 - Ports live in `backend/internal/ports`. Adapters live in `backend/internal/adapters`. `cmd/api` wires them.
 - Change the API by editing `api/openapi.yaml`, then run `make generate`. Do not hand-edit `backend/internal/adapters/http/openapi/server.gen.go` or `frontend/src/api/schema.d.ts`.
 - Only `frontend/src/ui/` may import `@patternfly/*`. Pages and features import `src/ui`.
+- Visual tokens are the `--rv-*` variables in `frontend/src/ui/styles.css`; PatternFly tokens point at them. One accent colour, Schibsted Grotesk and IBM Plex Mono only, self-hosted in `frontend/public/fonts` (OFL). No gradients or glass.
+- Project screenshots live in `frontend/public/projects` as WebP at full and half width, mapped per slug in `features/portfolio/media.ts`. Capture them from the live sites; never show P&L, win rates, or worker hostnames. DealRadar gets a schematic, not a fake screenshot.
 
 ## Content
 

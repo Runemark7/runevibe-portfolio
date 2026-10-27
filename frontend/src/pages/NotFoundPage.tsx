@@ -2,10 +2,13 @@ import { TextLink } from "../ui";
 
 export function NotFoundPage() {
   return (
-    <section className="rv-section">
-      <h1 className="rv-heading rv-heading--title">Page not found</h1>
+    <section className="rv-wrap rv-missing">
+      <p className="rv-missing-code">404</p>
+      <h1 className="rv-missing-title">Page not found</h1>
       <p>
-        <TextLink href="/">Back to the portfolio</TextLink>
+        <TextLink href="/" arrow="left">
+          Back to the portfolio
+        </TextLink>
       </p>
     </section>
   );
