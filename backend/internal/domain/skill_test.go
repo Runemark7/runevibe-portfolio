@@ -47,6 +47,21 @@ func TestUsedOftenRanksByCountThenName(t *testing.T) {
 	}
 }
 
+func TestDailyDriverHasNoProjectLink(t *testing.T) {
+	skill := Skill{Name: "Arch Linux", Basis: BasisDailyDriver, Usages: []Usage{{ProjectSlug: "warehouse"}}}
+	if err := skill.Validate(); err != ErrDailyDriverUsage {
+		t.Fatalf("got %v", err)
+	}
+	plain := Skill{Name: "Arch Linux", Basis: BasisDailyDriver}
+	if err := plain.Validate(); err != nil {
+		t.Fatal(err)
+	}
+	got := ProficiencyFor(plain)
+	if got.UsedOften || got.ProjectCount != 0 {
+		t.Fatalf("daily driver: %+v", got)
+	}
+}
+
 func TestProficienciesPreserveCatalogOrder(t *testing.T) {
 	skills := []Skill{
 		skillWith("Go", "a"),

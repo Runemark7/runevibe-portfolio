@@ -166,7 +166,7 @@ export function SkillMatrix({
     .sort((a, b) => b.projectCount - a.projectCount || a.name.localeCompare(b.name));
 
   return (
-    <div>
+    <div className="rv-skill-block">
       <h3 className="rv-heading rv-heading--section">Used often</h3>
       <p className="rv-note">
         A skill is used often when it is linked to at least {usedOftenMinProjects} featured projects.
@@ -200,17 +200,23 @@ export function SkillMatrix({
                   <span className="rv-skill-name">{skill.name}</span>
                   <span className="rv-skill-summary">{skill.summary}</span>
                 </th>
-                {projects.map((project) => {
-                  const used = skill.usages.some((usage) => usage.projectSlug === project.slug);
-                  return (
-                    <td key={project.slug} className={used ? "is-used" : "is-unused"}>
-                      <span className="rv-sr">
-                        {used ? `${skill.name} is used in ${project.name}` : `${skill.name} is not linked to ${project.name}`}
-                      </span>
-                      <span aria-hidden="true">{used ? "Yes" : "—"}</span>
-                    </td>
-                  );
-                })}
+                {skill.basis === "daily_driver" ? (
+                  <td className="is-driver" colSpan={projects.length}>
+                    Daily driver
+                  </td>
+                ) : (
+                  projects.map((project) => {
+                    const used = skill.usages.some((usage) => usage.projectSlug === project.slug);
+                    return (
+                      <td key={project.slug} className={used ? "is-used" : "is-unused"}>
+                        <span className="rv-sr">
+                          {used ? `${skill.name} is used in ${project.name}` : `${skill.name} is not linked to ${project.name}`}
+                        </span>
+                        <span aria-hidden="true">{used ? "Yes" : "—"}</span>
+                      </td>
+                    );
+                  })
+                )}
               </tr>
             ))}
           </tbody>

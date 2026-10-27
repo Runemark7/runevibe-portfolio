@@ -103,11 +103,11 @@ func TestGetProjectNotFound(t *testing.T) {
 func TestSkillsExposeDerivedProficiency(t *testing.T) {
 	h := NewHandler(service.NewPortfolio(fakeReader{
 		skills: []domain.Skill{
-			{Slug: "go", Name: "Go", SortOrder: 1, Usages: []domain.Usage{
+			{Slug: "go", Name: "Go", Basis: domain.BasisProjects, SortOrder: 1, Usages: []domain.Usage{
 				{ProjectSlug: "riksdagskollen", ProjectName: "Riksdagskollen"},
 				{ProjectSlug: "warehouse", ProjectName: "Warehouse"},
 			}},
-			{Slug: "arch", Name: "Arch Linux", SortOrder: 2},
+			{Slug: "arch", Name: "Arch Linux", Basis: domain.BasisDailyDriver, SortOrder: 2},
 		},
 	}), readyOK{})
 	rec := httptest.NewRecorder()

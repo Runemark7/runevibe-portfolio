@@ -2,7 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import type { Project, Skill } from "../../api/types";
-import { ProjectList, SkillMatrix } from "./content";
+import { Hero, ProjectList, SkillMatrix } from "./content";
 
 const projects: Project[] = [
   {
@@ -38,6 +38,7 @@ const skills: Skill[] = [
     name: "Go",
     summary: "Backend language.",
     category: "language",
+    basis: "projects",
     sortOrder: 1,
     projectCount: 2,
     usedOften: true,
@@ -49,14 +50,33 @@ const skills: Skill[] = [
   {
     slug: "arch",
     name: "Arch Linux",
-    summary: "Desktop operating system.",
+    summary: "Daily desktop.",
     category: "desktop",
+    basis: "daily_driver",
     sortOrder: 2,
     projectCount: 0,
     usedOften: false,
     usages: [],
   },
 ];
+
+describe("Hero", () => {
+  it("hides LinkedIn while the URL is null", () => {
+    render(
+      <Hero
+        profile={{
+          name: "Alexander Runemark",
+          headline: "Go + TypeScript engineer shipping self-hosted apps with AI agents",
+          summary: "Summary",
+          githubUrl: "https://github.com/Runemark7",
+          linkedinUrl: null,
+        }}
+      />,
+    );
+    expect(screen.queryByText(/LinkedIn/)).toBeNull();
+    expect(screen.queryByText("TODO")).toBeNull();
+  });
+});
 
 describe("ProjectList", () => {
   it("keeps featured order and does not link a private repository", () => {
@@ -90,6 +110,7 @@ describe("SkillMatrix", () => {
     expect(within(often).getByText("Go")).toBeInTheDocument();
     expect(within(often).getByText("Used in 2 projects")).toBeInTheDocument();
     expect(within(often).queryByText("Arch Linux")).toBeNull();
+    expect(screen.getByText("Daily driver")).toBeInTheDocument();
     expect(screen.getByRole("table")).toBeInTheDocument();
     expect(screen.queryByRole("progressbar")).toBeNull();
     expect(screen.queryByText(/%/)).toBeNull();

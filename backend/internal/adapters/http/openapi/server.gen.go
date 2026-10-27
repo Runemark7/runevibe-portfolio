@@ -31,6 +31,12 @@ const (
 	Public  ProjectVisibility = "public"
 )
 
+// Defines values for SkillBasis.
+const (
+	DailyDriver SkillBasis = "daily_driver"
+	Projects    SkillBasis = "projects"
+)
+
 // Agent defines model for Agent.
 type Agent struct {
 	Name      string `json:"name"`
@@ -121,8 +127,11 @@ type ProjectVisibility string
 
 // Skill defines model for Skill.
 type Skill struct {
-	Category string `json:"category"`
-	Name     string `json:"name"`
+	// Basis projects means the standing comes from featured-project usages.
+	// daily_driver is the everyday desktop and has no project link.
+	Basis    SkillBasis `json:"basis"`
+	Category string     `json:"category"`
+	Name     string     `json:"name"`
 
 	// ProjectCount Number of featured projects that use this skill. Derived from usages.
 	ProjectCount int     `json:"projectCount"`
@@ -134,6 +143,10 @@ type Skill struct {
 	// UsedOften True when projectCount is at least usedOftenMinProjects.
 	UsedOften bool `json:"usedOften"`
 }
+
+// SkillBasis projects means the standing comes from featured-project usages.
+// daily_driver is the everyday desktop and has no project link.
+type SkillBasis string
 
 // SkillList defines model for SkillList.
 type SkillList struct {

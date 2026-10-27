@@ -240,7 +240,7 @@ components:
           type: string
     Skill:
       type: object
-      required: [slug, name, summary, category, sortOrder, usages, projectCount, usedOften]
+      required: [slug, name, summary, category, basis, sortOrder, usages, projectCount, usedOften]
       properties:
         slug:
           type: string
@@ -250,6 +250,12 @@ components:
           type: string
         category:
           type: string
+        basis:
+          type: string
+          enum: [projects, daily_driver]
+          description: |
+            projects means the standing comes from featured-project usages.
+            daily_driver is the everyday desktop and has no project link.
         sortOrder:
           type: integer
           minimum: 1

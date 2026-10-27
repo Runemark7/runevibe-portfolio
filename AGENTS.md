@@ -16,7 +16,7 @@ Read `GLOSSARY.md` before naming a domain concept. Use its words in code, API fi
 - Private projects have no repository link. Do not add one.
 - The LinkedIn URL stays null until a real URL is provided. Do not guess it.
 - Do not put hostnames, IP addresses, or credentials in the repo. Production database access is `DATABASE_URL` from the environment or the Kubernetes Secret named in the Helm values.
-- Do not say the Riksdagskollen record is updated daily or that it is a complete history.
+- Riksdagskollen ingestion runs daily, with automated freshness alerting. Vote history starts in 2002/03. Do not call that history complete.
 - The paper-trading bot is paper-only. Do not claim profits.
 
 ## Tests and deploy

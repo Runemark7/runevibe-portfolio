@@ -165,7 +165,7 @@ func (r *Repository) attachFacts(ctx context.Context, projects []domain.Project)
 
 func (r *Repository) Skills(ctx context.Context) ([]domain.Skill, error) {
 	rows, err := r.pool.Query(ctx, `
-		SELECT slug, name, summary, category, sort_order
+		SELECT slug, name, summary, category, basis, sort_order
 		FROM skills
 		ORDER BY sort_order
 	`)
@@ -178,9 +178,11 @@ func (r *Repository) Skills(ctx context.Context) ([]domain.Skill, error) {
 	index := map[string]int{}
 	for rows.Next() {
 		var skill domain.Skill
-		if err := rows.Scan(&skill.Slug, &skill.Name, &skill.Summary, &skill.Category, &skill.SortOrder); err != nil {
+		var basis string
+		if err := rows.Scan(&skill.Slug, &skill.Name, &skill.Summary, &skill.Category, &basis, &skill.SortOrder); err != nil {
 			return nil, err
 		}
+		skill.Basis = domain.Basis(basis)
 		skill.Usages = []domain.Usage{}
 		index[skill.Slug] = len(skills)
 		skills = append(skills, skill)

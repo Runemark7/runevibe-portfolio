@@ -40,6 +40,7 @@ CREATE TABLE skills (
     name text NOT NULL,
     summary text NOT NULL,
     category text NOT NULL,
+    basis text NOT NULL DEFAULT 'projects' CHECK (basis IN ('projects', 'daily_driver')),
     sort_order integer NOT NULL UNIQUE CHECK (sort_order >= 1)
 );
 

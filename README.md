@@ -12,7 +12,7 @@ Requires Docker.
 make dev
 ```
 
-That starts Postgres, the API on [http://localhost:8080](http://localhost:8080), and the Vite app on [http://localhost:5173](http://localhost:5173). The database password in Compose is for this local database only.
+That starts Postgres 18, the API on [http://localhost:8080](http://localhost:8080), and the Vite app on [http://localhost:5173](http://localhost:5173). Compose uses `sslmode=disable`. That password and that database are local only.
 
 ```bash
 make test
@@ -42,8 +42,8 @@ Images publish to `ghcr.io/runemark7/runevibe-portfolio-api` and `ghcr.io/runema
 
 Nothing in this repository applies the chart, creates DNS records, or creates cluster secrets. Those steps are manual:
 
-1. On the external Postgres VPS, create a database and user for this site. Put the connection string in a Kubernetes Secret named `runevibe-portfolio-db` in the `runevibe` namespace, key `DATABASE_URL`. Create the secret before the Application syncs. Do not commit the value.
+1. On the external Postgres VPS, create a database and a role for this site. The role must be a member of the shared `apps` group and must own the database, because the API runs migrations at startup. The connection string must use `sslmode=require`. Put it in a Kubernetes Secret named `runevibe-portfolio-db` in the `runevibe` namespace, key `DATABASE_URL`. Create the secret before the Application syncs. Do not commit the value.
 2. Create `ghcr-pull-secret` in the `runevibe` namespace so the node can pull the images. If the GHCR packages are public, remove `imagePullSecrets` from `values-prod.yaml` instead of creating a dummy secret.
 3. Apply the Application once: `kubectl apply -f deploy/argocd/application.yaml`. Sync is automated after that (`prune`, `selfHeal`, `CreateNamespace=true`, `ServerSideApply=true`, retry limit 5).
 4. Point DNS A records for `runevibe.se` and `www.runevibe.se` at the ingress load balancer. cert-manager (issuer `letsencrypt-prod`) issues `runevibe-portfolio-tls`. HTTP redirects to HTTPS.
-5. Add a real LinkedIn URL to the profile row when one should be public. Until then the site shows a TODO and does not link anywhere.
+5. Add a real LinkedIn URL to the profile row when one should be public. Until then the site hides the LinkedIn link.

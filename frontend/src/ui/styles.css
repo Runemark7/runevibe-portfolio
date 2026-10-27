@@ -42,6 +42,8 @@ html {
 
 .rv-main {
   min-height: calc(100vh - 4.5rem);
+  min-width: 0;
+  max-width: 100%;
 }
 
 body,
@@ -82,6 +84,7 @@ body {
   margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
 }
@@ -245,12 +248,22 @@ body {
 
 .rv-section {
   padding: 2.4rem 0 0.4rem;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .rv-projects {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
   margin-top: 1.25rem;
+  min-width: 0;
+}
+
+.rv-skill-block {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
 }
 
 .rv-card,
@@ -331,21 +344,6 @@ body {
   border: 1px solid var(--rv-line);
 }
 
-.rv-todo {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--rv-muted);
-}
-
-.rv-todo-mark {
-  border: 1px dashed var(--rv-line);
-  border-radius: 999px;
-  padding: 0.05rem 0.45rem;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-}
-
 .rv-often {
   display: flex;
   flex-wrap: wrap;
@@ -371,7 +369,13 @@ body {
 }
 
 .rv-table-wrap {
-  overflow-x: auto;
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: auto;
+  contain: inline-size;
   margin-top: 1.1rem;
   border: 1px solid var(--rv-line);
   border-radius: 1rem;
@@ -401,8 +405,6 @@ body {
 .rv-matrix th:first-child,
 .rv-matrix td:first-child {
   text-align: left;
-  position: sticky;
-  left: 0;
   background: var(--rv-bg-elev);
 }
 
@@ -428,7 +430,8 @@ body {
   font-weight: 700;
 }
 
-.rv-matrix .is-unused {
+.rv-matrix .is-unused,
+.rv-matrix .is-driver {
   color: var(--rv-muted);
 }
 
@@ -536,7 +539,7 @@ body {
 
 @media (min-width: 800px) {
   .rv-projects {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 
   .rv-project--flagship {
@@ -553,6 +556,7 @@ body {
 
   .rv-fleet {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-width: 0;
   }
 
   .rv-flow {

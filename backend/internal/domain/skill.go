@@ -1,11 +1,26 @@
 package domain
 
-import "sort"
+import (
+	"errors"
+	"sort"
+)
 
 // UsedOftenMinProjects is the number of featured projects at or above which
 // a skill counts as used often. The count is the number of Usages. It is not
 // a percentage, a score, or years of experience.
 const UsedOftenMinProjects = 2
+
+type Basis string
+
+const (
+	BasisProjects    Basis = "projects"
+	BasisDailyDriver Basis = "daily_driver"
+)
+
+var (
+	ErrInvalidBasis     = errors.New("invalid skill basis")
+	ErrDailyDriverUsage = errors.New("a daily driver skill cannot be linked to a featured project")
+)
 
 type Usage struct {
 	ProjectSlug string
@@ -17,8 +32,21 @@ type Skill struct {
 	Name      string
 	Summary   string
 	Category  string
+	Basis     Basis
 	SortOrder int
 	Usages    []Usage
+}
+
+func (s Skill) Validate() error {
+	switch s.Basis {
+	case BasisProjects, BasisDailyDriver:
+	default:
+		return ErrInvalidBasis
+	}
+	if s.Basis == BasisDailyDriver && len(s.Usages) > 0 {
+		return ErrDailyDriverUsage
+	}
+	return nil
 }
 
 // Proficiency is a Skill plus the standing derived from its Usages.

@@ -24,6 +24,10 @@ _Avoid_: skill bar, years of experience, level, percentage
 The standing of a Skill whose Usages cover at least two featured Projects.
 _Avoid_: expertise, seniority
 
+**Daily driver**:
+A Skill used as the everyday desktop. It has no Usage.
+_Avoid_: project link, years of experience
+
 **Workflow**:
 A repeatable way of working. Here, the ordered coding steps from questioning an idea through a pull request.
 _Avoid_: pipeline, CI job

@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:17-alpine
+        image: postgres:18-alpine
         env:
           POSTGRES_USER: portfolio
           POSTGRES_PASSWORD: portfolio
@@ -78,6 +78,14 @@ jobs:
       - name: Build
         working-directory: frontend
         run: npm run build
+
+      - name: Install Playwright browser
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Viewport has no horizontal scroll
+        working-directory: frontend
+        run: npm run test:viewport
 
   check-generated:
     name: Generated code is current

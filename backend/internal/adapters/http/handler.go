@@ -97,6 +97,7 @@ func (h *Handler) ListSkills(w http.ResponseWriter, r *http.Request) {
 			Name:         proficiency.Skill.Name,
 			Summary:      proficiency.Skill.Summary,
 			Category:     proficiency.Skill.Category,
+			Basis:        openapi.SkillBasis(proficiency.Skill.Basis),
 			SortOrder:    proficiency.Skill.SortOrder,
 			Usages:       usages,
 			ProjectCount: proficiency.ProjectCount,

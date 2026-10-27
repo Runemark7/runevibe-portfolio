@@ -116,17 +116,11 @@ export function TextLink({
 }
 
 export function LinkedInPlaceholder({ url }: { url?: string | null }) {
-  if (url) {
-    return (
-      <TextLink href={url} external>
-        LinkedIn
-      </TextLink>
-    );
-  }
+  if (!url) return null;
   return (
-    <span className="rv-todo">
-      LinkedIn <span className="rv-todo-mark">TODO</span>
-    </span>
+    <TextLink href={url} external>
+      LinkedIn
+    </TextLink>
   );
 }
 

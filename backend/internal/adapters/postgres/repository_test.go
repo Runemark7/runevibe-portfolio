@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 	"time"
 
@@ -60,6 +61,15 @@ func TestSeedMatchesPortfolioRules(t *testing.T) {
 	if votes != "3,957,311 as of 2026-10-24 (about 4 million)" {
 		t.Fatalf("vote fact = %q", votes)
 	}
+	if strings.Contains(projects[0].Body, "complete history") {
+		t.Fatal("vote history must not be described as complete")
+	}
+	if !strings.Contains(projects[0].Body, "Ingestion runs daily") || !strings.Contains(projects[0].Body, "freshness alerting") || !strings.Contains(projects[0].Body, "2002/03") {
+		t.Fatalf("riksdagskollen body missing ingestion wording: %s", projects[0].Body)
+	}
+	if !strings.Contains(projects[3].Body, "PixiJS") {
+		t.Fatal("warehouse frontend is PixiJS; the live bundle includes pixi.js")
+	}
 
 	skills, err := repo.Skills(ctx)
 	if err != nil {
@@ -74,11 +84,27 @@ func TestSeedMatchesPortfolioRules(t *testing.T) {
 		t.Fatalf("go proficiency: %+v", goSkill)
 	}
 	arch := domain.ProficiencyFor(bySlug["arch"])
-	if arch.UsedOften || arch.ProjectCount != 0 {
+	if err := bySlug["arch"].Validate(); err != nil {
+		t.Fatal(err)
+	}
+	if arch.UsedOften || arch.ProjectCount != 0 || bySlug["arch"].Basis != domain.BasisDailyDriver {
 		t.Fatalf("arch proficiency: %+v", arch)
 	}
-	if domain.ProficiencyFor(bySlug["cert-manager"]).ProjectCount != 0 {
-		t.Fatal("cert-manager has no featured-project usage")
+	counts := map[string]int{
+		"docker":         4,
+		"github-actions": 4,
+		"k3s":            5,
+		"helm":           5,
+		"argocd":         5,
+		"cert-manager":   4,
+		"openapi":        3,
+		"hexagonal":      1,
+	}
+	for slug, want := range counts {
+		got := domain.ProficiencyFor(bySlug[slug])
+		if got.ProjectCount != want {
+			t.Fatalf("%s project count = %d, want %d", slug, got.ProjectCount, want)
+		}
 	}
 
 	workflow, err := repo.Workflow(ctx)
@@ -90,6 +116,12 @@ func TestSeedMatchesPortfolioRules(t *testing.T) {
 	}
 	if workflow.Steps[0].Name != "grill-me" || workflow.Steps[5].Name != "pr" {
 		t.Fatalf("steps: %+v", workflow.Steps)
+	}
+	if strings.Contains(workflow.Steps[5].Summary, "Alexander reviews it") || !strings.Contains(workflow.Steps[5].Summary, "code review") {
+		t.Fatalf("pr step: %s", workflow.Steps[5].Summary)
+	}
+	if strings.Contains(workflow.Summary, "Alexander reviews") || !strings.Contains(workflow.Summary, "code review") {
+		t.Fatalf("workflow summary: %s", workflow.Summary)
 	}
 
 	missing, err := repo.ProjectBySlug(ctx, "not-a-project")

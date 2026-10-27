@@ -50,6 +50,11 @@ func (p *Portfolio) Skills(ctx context.Context) ([]domain.Proficiency, error) {
 	if err != nil {
 		return nil, err
 	}
+	for _, skill := range skills {
+		if err := skill.Validate(); err != nil {
+			return nil, err
+		}
+	}
 	return domain.Proficiencies(skills), nil
 }
 

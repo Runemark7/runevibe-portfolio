@@ -208,6 +208,12 @@ export interface components {
             name: string;
             summary: string;
             category: string;
+            /**
+             * @description projects means the standing comes from featured-project usages.
+             *     daily_driver is the everyday desktop and has no project link.
+             * @enum {string}
+             */
+            basis: "projects" | "daily_driver";
             sortOrder: number;
             usages: components["schemas"]["Usage"][];
             /** @description Number of featured projects that use this skill. Derived from usages. */

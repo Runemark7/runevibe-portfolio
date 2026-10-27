@@ -55,6 +55,7 @@ func TestProjectsSortAndSkillsDeriveUsedOften(t *testing.T) {
 		},
 		skills: []domain.Skill{{
 			Name:   "Go",
+			Basis:  domain.BasisProjects,
 			Usages: []domain.Usage{{ProjectSlug: "a"}, {ProjectSlug: "b"}},
 		}},
 	})
