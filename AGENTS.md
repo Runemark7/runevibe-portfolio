@@ -14,7 +14,7 @@ Read `GLOSSARY.md` before naming a domain concept. Use its words in code, API fi
 ## Content
 
 - Portfolio claims, numbers, and links come from the seed migration. Do not invent metrics, years, proficiency bars, live URLs, or repository URLs.
-- Featured projects are only Riksdagskollen, DealRadar, Paper Trading Bot, Warehouse, and the Halmstad homes map, in that order.
+- Featured projects are only Riksdagskollen, DealRadar, Paper Trading Bot, and the Halmstad homes map, in that order. Warehouse is not featured; do not add it back.
 - Private projects have no repository link. Do not add one.
 - The LinkedIn URL stays null until a real URL is provided. Do not guess it.
 - Do not put hostnames, IP addresses, or credentials in the repo. Production database access is `DATABASE_URL` from the environment or the Kubernetes Secret named in the Helm values.

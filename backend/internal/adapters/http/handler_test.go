@@ -105,7 +105,7 @@ func TestSkillsExposeDerivedProficiency(t *testing.T) {
 		skills: []domain.Skill{
 			{Slug: "go", Name: "Go", Basis: domain.BasisProjects, SortOrder: 1, Usages: []domain.Usage{
 				{ProjectSlug: "riksdagskollen", ProjectName: "Riksdagskollen"},
-				{ProjectSlug: "warehouse", ProjectName: "Warehouse"},
+				{ProjectSlug: "dealradar", ProjectName: "DealRadar"},
 			}},
 			{Slug: "arch", Name: "Arch Linux", Basis: domain.BasisDailyDriver, SortOrder: 2},
 		},

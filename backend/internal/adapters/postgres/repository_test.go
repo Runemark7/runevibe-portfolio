@@ -27,10 +27,10 @@ func TestSeedMatchesPortfolioRules(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(projects) != 5 {
-		t.Fatalf("projects = %d, want 5", len(projects))
+	if len(projects) != 4 {
+		t.Fatalf("projects = %d, want 4", len(projects))
 	}
-	wantOrder := []string{"riksdagskollen", "dealradar", "paper-trading-bot", "warehouse", "halmstad-homes"}
+	wantOrder := []string{"riksdagskollen", "dealradar", "paper-trading-bot", "halmstad-homes"}
 	for i, slug := range wantOrder {
 		if projects[i].Slug != slug {
 			t.Fatalf("project %d = %s, want %s", i, projects[i].Slug, slug)
@@ -38,6 +38,12 @@ func TestSeedMatchesPortfolioRules(t *testing.T) {
 		if err := projects[i].Validate(); err != nil {
 			t.Fatalf("%s: %v", slug, err)
 		}
+		if projects[i].SortOrder != i+1 {
+			t.Fatalf("%s sort order = %d, want %d", slug, projects[i].SortOrder, i+1)
+		}
+	}
+	if projects[3].Kind != domain.KindSmaller {
+		t.Fatalf("halmstad kind = %s", projects[3].Kind)
 	}
 	if projects[0].Kind != domain.KindFlagship {
 		t.Fatalf("flagship = %s", projects[0].Kind)
@@ -45,7 +51,7 @@ func TestSeedMatchesPortfolioRules(t *testing.T) {
 	if projects[1].RepoURL != nil || projects[1].LiveURL != nil {
 		t.Fatal("DealRadar must not expose a repository or a live URL")
 	}
-	if projects[3].RepoURL != nil || projects[4].RepoURL != nil {
+	if projects[3].RepoURL != nil {
 		t.Fatal("private projects must not expose a repository URL")
 	}
 	if projects[2].Credit == nil || projects[2].Credit.License != "MIT" {
@@ -67,8 +73,15 @@ func TestSeedMatchesPortfolioRules(t *testing.T) {
 	if !strings.Contains(projects[0].Body, "Ingestion runs daily") || !strings.Contains(projects[0].Body, "freshness alerting") || !strings.Contains(projects[0].Body, "2002/03") {
 		t.Fatalf("riksdagskollen body missing ingestion wording: %s", projects[0].Body)
 	}
-	if !strings.Contains(projects[3].Body, "PixiJS") {
-		t.Fatal("warehouse frontend is PixiJS; the live bundle includes pixi.js")
+	if _, err := repo.ProjectBySlug(ctx, "warehouse"); !errors.Is(err, ports.ErrNotFound) {
+		t.Fatalf("warehouse must not be featured: %v", err)
+	}
+	profile, err := repo.Profile(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(strings.ToLower(profile.Summary), "pixel-art") {
+		t.Fatalf("profile still mentions warehouse: %s", profile.Summary)
 	}
 
 	skills, err := repo.Skills(ctx)
@@ -80,7 +93,7 @@ func TestSeedMatchesPortfolioRules(t *testing.T) {
 		bySlug[skill.Slug] = skill
 	}
 	goSkill := domain.ProficiencyFor(bySlug["go"])
-	if !goSkill.UsedOften || goSkill.ProjectCount != 3 {
+	if !goSkill.UsedOften || goSkill.ProjectCount != 2 {
 		t.Fatalf("go proficiency: %+v", goSkill)
 	}
 	arch := domain.ProficiencyFor(bySlug["arch"])
@@ -91,14 +104,19 @@ func TestSeedMatchesPortfolioRules(t *testing.T) {
 		t.Fatalf("arch proficiency: %+v", arch)
 	}
 	counts := map[string]int{
-		"docker":         4,
-		"github-actions": 4,
-		"k3s":            5,
-		"helm":           5,
-		"argocd":         5,
-		"cert-manager":   4,
-		"openapi":        3,
-		"hexagonal":      1,
+		"typescript-react": 4,
+		"python":           2,
+		"postgresql":       3,
+		"docker":           3,
+		"github-actions":   3,
+		"k3s":              4,
+		"helm":             4,
+		"argocd":           4,
+		"cert-manager":     3,
+		"openapi":          2,
+		"llm":              2,
+		"hexagonal":        1,
+		"n8n":              1,
 	}
 	for slug, want := range counts {
 		got := domain.ProficiencyFor(bySlug[slug])
@@ -106,13 +124,28 @@ func TestSeedMatchesPortfolioRules(t *testing.T) {
 			t.Fatalf("%s project count = %d, want %d", slug, got.ProjectCount, want)
 		}
 	}
+	for _, skill := range skills {
+		for _, usage := range skill.Usages {
+			if usage.ProjectSlug == "warehouse" {
+				t.Fatalf("%s still links to warehouse", skill.Slug)
+			}
+		}
+	}
+	if strings.Contains(bySlug["llm"].Summary, "labelling") {
+		t.Fatalf("llm summary still describes warehouse labelling: %s", bySlug["llm"].Summary)
+	}
 
 	workflow, err := repo.Workflow(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(workflow.Agents) != 7 || len(workflow.Steps) != 6 {
+	if len(workflow.Agents) != 6 || len(workflow.Steps) != 6 {
 		t.Fatalf("workflow agents=%d steps=%d", len(workflow.Agents), len(workflow.Steps))
+	}
+	for i, agent := range workflow.Agents {
+		if agent.Slug == "warehouse" || agent.SortOrder != i+1 {
+			t.Fatalf("agent %d: %+v", i, agent)
+		}
 	}
 	if workflow.Steps[0].Name != "grill-me" || workflow.Steps[5].Name != "pr" {
 		t.Fatalf("steps: %+v", workflow.Steps)
@@ -135,6 +168,47 @@ func TestSeedMatchesPortfolioRules(t *testing.T) {
 	`)
 	if err == nil {
 		t.Fatal("private project accepted a repository URL")
+	}
+}
+
+func TestRemoveWarehouseMigrationRoundTrip(t *testing.T) {
+	repo := openSeeded(t)
+	ctx := context.Background()
+	m, err := migrate.New("file://"+migrationsDir(t), os.Getenv("DATABASE_URL"))
+	if err != nil {
+		t.Fatalf("migrate: %v", err)
+	}
+	defer func() {
+		_, _ = m.Close()
+	}()
+
+	if err := m.Steps(-1); err != nil {
+		t.Fatalf("down: %v", err)
+	}
+	projects, err := repo.Projects(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(projects) != 5 || projects[3].Slug != "warehouse" || projects[4].SortOrder != 5 {
+		t.Fatalf("down did not restore warehouse: %d projects", len(projects))
+	}
+	workflow, err := repo.Workflow(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(workflow.Agents) != 7 || workflow.Agents[3].Slug != "warehouse" {
+		t.Fatalf("down did not restore the warehouse agent: %+v", workflow.Agents)
+	}
+
+	if err := m.Steps(1); err != nil {
+		t.Fatalf("up: %v", err)
+	}
+	projects, err = repo.Projects(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(projects) != 4 {
+		t.Fatalf("up left %d projects", len(projects))
 	}
 }
 

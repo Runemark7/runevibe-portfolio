@@ -983,8 +983,7 @@ a:hover > .rv-arrow--out {
   white-space: nowrap;
 }
 
-.rv-frame img,
-.rv-phone img {
+.rv-frame img {
   display: block;
   width: 100%;
   height: auto;
@@ -1006,37 +1005,6 @@ a:hover > .rv-arrow--out {
   grid-row: 2;
   margin-top: clamp(-15rem, -17vw, -4rem);
   z-index: 1;
-}
-
-.rv-shots--split:has(.rv-shot-phone) {
-  padding-bottom: 2.5rem;
-  padding-left: clamp(0rem, 4vw, 3rem);
-}
-
-.rv-shot-phone {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  z-index: 1;
-  width: clamp(6.5rem, 12vw, 10.5rem);
-}
-
-.rv-phone {
-  border: 5px solid #151513;
-  border-radius: 1.5rem;
-  overflow: hidden;
-  background: #151513;
-  box-shadow: var(--rv-shadow);
-  transition: transform 0.5s var(--rv-ease);
-}
-
-.rv-phone:hover {
-  transform: translateY(-6px) rotate(-1deg);
-}
-
-:root.pf-v6-theme-dark .rv-phone {
-  border-color: #3a3833;
-  background: #3a3833;
 }
 
 /* Schematic sheet */
@@ -1702,13 +1670,6 @@ a:hover > .rv-arrow--out {
   z-index: 1;
 }
 
-.rv-shots--detail > .rv-shot-phone {
-  position: static;
-  grid-column: 1 / span 3;
-  width: auto;
-  max-width: 13rem;
-}
-
 .rv-detail-body {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -1986,20 +1947,6 @@ a:hover > .rv-arrow--out {
   .rv-hero-word:last-child {
     padding-left: 0;
   }
-
-  .rv-shots--split:has(.rv-shot-phone) {
-    padding-left: 0;
-    padding-bottom: 3.5rem;
-  }
-
-  .rv-shot-phone {
-    left: auto;
-    right: 0.75rem;
-  }
-
-  .rv-shots--detail > .rv-shot-phone {
-    grid-column: 1 / span 6;
-  }
 }
 
 @media (max-width: 420px) {
@@ -2025,8 +1972,7 @@ a:hover > .rv-arrow--out {
     transition-duration: 0.01ms !important;
   }
 
-  .rv-frame:hover,
-  .rv-phone:hover {
+  .rv-frame:hover {
     transform: none;
   }
 }

@@ -3,7 +3,7 @@ import type { FrameImage } from "../../ui";
 export type Shot = FrameImage & { path: string };
 
 export type ProjectMedia =
-  | { kind: "screens"; primary: Shot; secondary?: Shot; phone?: FrameImage }
+  | { kind: "screens"; primary: Shot; secondary?: Shot }
   | { kind: "schematic" };
 
 function responsive(name: string, width: number, height: number): Omit<FrameImage, "alt"> {
@@ -37,20 +37,6 @@ const MEDIA: Record<string, ProjectMedia> = {
       ...responsive("paper-trading-bot", 1264, 530),
       path: "/discovery",
       alt: "Paper trading bot discovery view: counts of strategies tested, qualified, and rejected, and the strategy currently being backtested.",
-    },
-  },
-  warehouse: {
-    kind: "screens",
-    primary: {
-      ...responsive("warehouse", 1440, 900),
-      path: "/",
-      alt: "Warehouse flow map of Riksdagskollen: data suppliers on the left, daily trucks, racks grouped by area, and the counter that serves the users.",
-    },
-    phone: {
-      src: "/projects/warehouse-phone-360.webp",
-      width: 360,
-      height: 780,
-      alt: "Warehouse on a phone: the same flow map as a narrow layout with suppliers and trucks.",
     },
   },
   "halmstad-homes": {

@@ -4,7 +4,6 @@ import {
   ButtonLink,
   Frame,
   LinkedInPlaceholder,
-  PhoneFrame,
   Sheet,
   TextLink,
   Toggle,
@@ -241,7 +240,6 @@ function ProjectMedia({
           className="rv-shot-secondary"
         />
       ) : null}
-      {media.phone ? <PhoneFrame image={media.phone} className="rv-shot-phone" /> : null}
     </div>
   );
 }

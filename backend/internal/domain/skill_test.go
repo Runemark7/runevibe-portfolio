@@ -48,7 +48,7 @@ func TestUsedOftenRanksByCountThenName(t *testing.T) {
 }
 
 func TestDailyDriverHasNoProjectLink(t *testing.T) {
-	skill := Skill{Name: "Arch Linux", Basis: BasisDailyDriver, Usages: []Usage{{ProjectSlug: "warehouse"}}}
+	skill := Skill{Name: "Arch Linux", Basis: BasisDailyDriver, Usages: []Usage{{ProjectSlug: "halmstad-homes"}}}
 	if err := skill.Validate(); err != ErrDailyDriverUsage {
 		t.Fatalf("got %v", err)
 	}

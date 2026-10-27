@@ -307,14 +307,6 @@ export function Frame({
   );
 }
 
-export function PhoneFrame({ image, className }: { image: FrameImage; className?: string }) {
-  return (
-    <figure className={className ? `rv-phone ${className}` : "rv-phone"}>
-      <FrameImg image={image} sizes="12rem" priority={false} />
-    </figure>
-  );
-}
-
 export function Sheet({ label, caption, children }: { label: string; caption: string; children: ReactNode }) {
   return (
     <figure className="rv-sheet">

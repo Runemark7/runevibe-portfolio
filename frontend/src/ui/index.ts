@@ -13,7 +13,6 @@ export {
   LinkedInPlaceholder,
   Loading,
   Mark,
-  PhoneFrame,
   Section,
   Sheet,
   TextLink,

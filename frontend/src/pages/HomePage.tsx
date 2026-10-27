@@ -2,6 +2,12 @@ import { ErrorNote, Loading, Section } from "../ui";
 import { Hero, InfraList, ProjectList, SkillMatrix, WorkflowDiagram } from "../features/portfolio/content";
 import { usePortfolio } from "../features/portfolio/state";
 
+const COUNT_WORDS = ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
+
+function countWord(count: number): string {
+  return COUNT_WORDS[count] ?? String(count);
+}
+
 export function HomePage() {
   const portfolio = usePortfolio();
   if (portfolio.status === "loading") {
@@ -18,7 +24,7 @@ export function HomePage() {
         index="01"
         kicker="Work"
         title="Projects"
-        intro="Five projects, in the order they should be read. Private repositories are not linked."
+        intro={`${countWord(portfolio.projects.length)} projects, in the order they should be read. Private repositories are not linked.`}
       >
         <ProjectList projects={portfolio.projects} />
       </Section>

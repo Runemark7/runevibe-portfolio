@@ -1,12 +1,17 @@
 import { expect, test } from "@playwright/test";
 
-const projects = ["Riksdagskollen", "DealRadar", "Paper Trading Bot", "Warehouse", "Halmstad homes map"].map(
-  (name, index) => ({
-    slug: name.toLowerCase().replace(/[^a-z]+/g, "-").replace(/^-|-$/g, ""),
+const projects = [
+  { slug: "riksdagskollen", name: "Riksdagskollen", kind: "flagship" },
+  { slug: "dealradar", name: "DealRadar", kind: "main" },
+  { slug: "paper-trading-bot", name: "Paper Trading Bot", kind: "standard" },
+  { slug: "halmstad-homes", name: "Halmstad homes map", kind: "smaller" },
+].map(
+  ({ slug, name, kind }, index) => ({
+    slug,
     name,
     summary: "Summary",
     body: "Body",
-    kind: index === 0 ? "flagship" : "standard",
+    kind,
     visibility: "public",
     sortOrder: index + 1,
     liveUrl: index === 1 ? null : `https://${index}.example.test`,
@@ -16,7 +21,7 @@ const projects = ["Riksdagskollen", "DealRadar", "Paper Trading Bot", "Warehouse
   }),
 );
 
-const agents = ["Chief of Staff", "Paper Trader", "Democracy Tracker", "Warehouse", "Apartment Finder", "Parking watcher", "Portfolio"].map(
+const agents = ["Chief of Staff", "Paper Trader", "Democracy Tracker", "Apartment Finder", "Parking watcher", "Portfolio"].map(
   (name, index) => ({
     slug: index === 0 ? "chief-of-staff" : name.toLowerCase().replace(/\s+/g, "-"),
     name,
