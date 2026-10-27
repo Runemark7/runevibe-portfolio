@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "runevibe-portfolio.fullname" . }}-backend
+  labels:
+    {{- include "runevibe-portfolio.labels" . | nindent 4 }}
+    {{- include "runevibe-portfolio.backend.selectorLabels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "runevibe-portfolio.backend.selectorLabels" . | nindent 4 }}
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

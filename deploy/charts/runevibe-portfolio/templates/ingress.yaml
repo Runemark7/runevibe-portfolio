@@ -1,0 +1,54 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "runevibe-portfolio.fullname" . }}
+  labels:
+    {{- include "runevibe-portfolio.labels" . | nindent 4 }}
+  annotations:
+    {{- range $k, $v := .Values.ingress.annotations }}
+    {{ $k }}: {{ $v | quote }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  tls:
+    - hosts:
+        {{- range .Values.ingress.hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .Values.ingress.tlsSecretName }}
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ . | quote }}
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "runevibe-portfolio.fullname" $ }}-backend
+                port:
+                  number: 80
+          - path: /healthz
+            pathType: Exact
+            backend:
+              service:
+                name: {{ include "runevibe-portfolio.fullname" $ }}-backend
+                port:
+                  number: 80
+          - path: /readyz
+            pathType: Exact
+            backend:
+              service:
+                name: {{ include "runevibe-portfolio.fullname" $ }}-backend
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "runevibe-portfolio.fullname" $ }}-frontend
+                port:
+                  number: 80
+    {{- end }}
+{{- end }}

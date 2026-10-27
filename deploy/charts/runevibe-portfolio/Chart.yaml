@@ -1,0 +1,9 @@
+apiVersion: v2
+name: runevibe-portfolio
+description: Alexander Runemark's portfolio site (runevibe.se)
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+
+# PostgreSQL runs on a separate VPS, not in this cluster.
+# DATABASE_URL is supplied by the Secret named in values.yaml `dbSecretName`.

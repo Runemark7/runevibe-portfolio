@@ -1,0 +1,31 @@
+## Production overrides. CI writes the commit SHA into the image tags.
+backend:
+  replicas: 1
+  image:
+    repository: ghcr.io/runemark7/runevibe-portfolio-api
+    pullPolicy: Always
+    tag: latest
+  imagePullSecrets:
+    - name: ghcr-pull-secret
+  env:
+    PORT: "8080"
+    MIGRATIONS_PATH: "file:///migrations"
+    CORS_ALLOWED_ORIGIN: "https://runevibe.se,https://www.runevibe.se"
+    GOMEMLIMIT: "96MiB"
+frontend:
+  replicas: 1
+  image:
+    repository: ghcr.io/runemark7/runevibe-portfolio-frontend
+    pullPolicy: Always
+    tag: latest
+  imagePullSecrets:
+    - name: ghcr-pull-secret
+ingress:
+  hosts:
+    - runevibe.se
+    - www.runevibe.se
+  tlsSecretName: runevibe-portfolio-tls
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"

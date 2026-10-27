@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Alexander Runemark — Go and TypeScript</title>
+    <meta
+      name="description"
+      content="Alexander Runemark builds self-hosted web apps with Go and TypeScript, and runs a fleet of specialised AI assistants. Portfolio for runevibe.se."
+    />
+    <link rel="canonical" href="https://runevibe.se/" />
+    <meta name="theme-color" content="#101412" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Alexander Runemark" />
+    <meta property="og:title" content="Alexander Runemark — Go and TypeScript" />
+    <meta
+      property="og:description"
+      content="Go + TypeScript engineer shipping self-hosted apps with AI agents."
+    />
+    <meta property="og:url" content="https://runevibe.se/" />
+    <meta property="og:image" content="https://runevibe.se/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Alexander Runemark — Go and TypeScript" />
+    <meta
+      name="twitter:description"
+      content="Go + TypeScript engineer shipping self-hosted apps with AI agents."
+    />
+    <meta name="twitter:image" content="https://runevibe.se/og.png" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Alexander Runemark",
+        "url": "https://runevibe.se/",
+        "description": "Go + TypeScript engineer shipping self-hosted apps with AI agents.",
+        "sameAs": ["https://github.com/Runemark7"]
+      }
+    </script>
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("rv-theme");
+          var dark = stored
+            ? stored === "dark"
+            : window.matchMedia("(prefers-color-scheme: dark)").matches;
+          if (dark) document.documentElement.classList.add("pf-v6-theme-dark");
+          document.documentElement.dataset.theme = dark ? "dark" : "light";
+          var theme = document.querySelector('meta[name="theme-color"]');
+          if (theme) theme.setAttribute("content", dark ? "#101412" : "#f3efe6");
+        } catch (e) {}
+      })();
+    </script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: #f3efe6;
+        color: #1b1914;
+        font-family: system-ui, sans-serif;
+      }
+      html.pf-v6-theme-dark,
+      html.pf-v6-theme-dark body {
+        background: #101412;
+        color: #ece7dc;
+      }
+      html {
+        scrollbar-gutter: stable;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <p>
+        Alexander Runemark — Go + TypeScript engineer shipping self-hosted apps with AI agents.
+        <a href="https://github.com/Runemark7">GitHub</a>.
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
