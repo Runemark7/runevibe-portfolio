@@ -305,7 +305,7 @@ var paperTradingLibrary = paperTradingCopy{
 	summary: "Paper-only BTC research that scores a library of published strategies and only proposes ones that stay positive after fees out of sample and on a sealed holdout. No real money.",
 	bodyHas: []string{
 		"does not handle real money",
-		"10,000 paper accounts",
+		"isolated paper account that starts at 10,000",
 		"library of 15 published, cited strategies",
 		"2017-08-17",
 		"v7b, dated 2026-10-29",

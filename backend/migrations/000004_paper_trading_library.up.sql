@@ -2,7 +2,7 @@
 UPDATE projects
 SET
     summary = 'Paper-only BTC research that scores a library of published strategies and only proposes ones that stay positive after fees out of sample and on a sealed holdout. No real money.',
-    body = $body$The paper trading bot researches BTC strategies on paper. It does not place real orders and it does not handle real money. The live paper book runs isolated 10,000 paper accounts, one per champion, and cycles every 5 minutes.
+    body = $body$The paper trading bot researches BTC strategies on paper. It does not place real orders and it does not handle real money. Each champion trades its own isolated paper account that starts at 10,000, and the book cycles every 5 minutes.
 
 Discovery scores a pre-registered library of 15 published, cited strategies on daily BTC bars. A position is long or flat. Examples include RSI(2), SMA 100 and SMA 200 trend filters, a golden cross, MACD, time-series momentum over 1 week, 3 months, 6 months, and 12 months, a Turtle 55-day breakout, and Faber 10-month. It uses a signal-exit engine and one 20% stop. Indicators are warmed from BTC history starting 2017-08-17. Random strategy minting is no longer the default.
 
