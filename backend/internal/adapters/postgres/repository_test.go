@@ -57,6 +57,13 @@ func TestSeedMatchesPortfolioRules(t *testing.T) {
 	if projects[2].Credit == nil || projects[2].Credit.License != "MIT" {
 		t.Fatalf("paper trading credit: %+v", projects[2].Credit)
 	}
+	if projects[2].RepoURL == nil || *projects[2].RepoURL != "https://github.com/Runemark7/paper-trading-bot" {
+		t.Fatalf("paper trading repository: %v", projects[2].RepoURL)
+	}
+	if projects[2].LiveURL == nil || *projects[2].LiveURL != "https://trading.runevibe.se" {
+		t.Fatalf("paper trading live URL: %v", projects[2].LiveURL)
+	}
+	assertPaperTrading(t, projects[2], paperTradingLibrary)
 
 	var votes string
 	for _, fact := range projects[0].Facts {
@@ -182,8 +189,9 @@ func TestRemoveWarehouseMigrationRoundTrip(t *testing.T) {
 		_, _ = m.Close()
 	}()
 
-	if err := m.Steps(-1); err != nil {
-		t.Fatalf("down: %v", err)
+	// 000004 sits above the warehouse removal. Roll back to the original seed.
+	if err := m.Migrate(2); err != nil {
+		t.Fatalf("down to version 2: %v", err)
 	}
 	projects, err := repo.Projects(ctx)
 	if err != nil {
@@ -200,7 +208,7 @@ func TestRemoveWarehouseMigrationRoundTrip(t *testing.T) {
 		t.Fatalf("down did not restore the warehouse agent: %+v", workflow.Agents)
 	}
 
-	if err := m.Steps(1); err != nil {
+	if err := m.Up(); err != nil {
 		t.Fatalf("up: %v", err)
 	}
 	projects, err = repo.Projects(ctx)
@@ -210,6 +218,135 @@ func TestRemoveWarehouseMigrationRoundTrip(t *testing.T) {
 	if len(projects) != 4 {
 		t.Fatalf("up left %d projects", len(projects))
 	}
+	assertPaperTrading(t, projects[2], paperTradingLibrary)
+}
+
+func TestPaperTradingLibraryMigrationRoundTrip(t *testing.T) {
+	repo := openSeeded(t)
+	ctx := context.Background()
+	m, err := migrate.New("file://"+migrationsDir(t), os.Getenv("DATABASE_URL"))
+	if err != nil {
+		t.Fatalf("migrate: %v", err)
+	}
+	defer func() {
+		_, _ = m.Close()
+	}()
+
+	projects, err := repo.Projects(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertPaperTrading(t, projects[2], paperTradingLibrary)
+
+	if err := m.Steps(-1); err != nil {
+		t.Fatalf("down: %v", err)
+	}
+	projects, err = repo.Projects(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(projects) != 4 || projects[2].Slug != "paper-trading-bot" || projects[2].SortOrder != 3 {
+		t.Fatalf("down changed project order: %+v", projects)
+	}
+	assertPaperTrading(t, projects[2], paperTradingMint)
+	if _, err := repo.ProjectBySlug(ctx, "warehouse"); !errors.Is(err, ports.ErrNotFound) {
+		t.Fatalf("paper-trading down restored warehouse: %v", err)
+	}
+
+	if err := m.Steps(1); err != nil {
+		t.Fatalf("up: %v", err)
+	}
+	projects, err = repo.Projects(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertPaperTrading(t, projects[2], paperTradingLibrary)
+	if projects[0].Facts[0].Value != "3,957,311 as of 2026-10-24 (about 4 million)" {
+		t.Fatalf("riksdag fact changed: %+v", projects[0].Facts)
+	}
+}
+
+type paperTradingCopy struct {
+	summary string
+	bodyHas []string
+	bodyNot []string
+	facts   []domain.Fact
+}
+
+func assertPaperTrading(t *testing.T, project domain.Project, want paperTradingCopy) {
+	t.Helper()
+	if project.Slug != "paper-trading-bot" {
+		t.Fatalf("slug = %s", project.Slug)
+	}
+	if project.Summary != want.summary {
+		t.Fatalf("summary = %q", project.Summary)
+	}
+	for _, phrase := range want.bodyHas {
+		if !strings.Contains(project.Body, phrase) {
+			t.Fatalf("body missing %q:\n%s", phrase, project.Body)
+		}
+	}
+	for _, phrase := range want.bodyNot {
+		if strings.Contains(project.Body, phrase) {
+			t.Fatalf("body still contains %q:\n%s", phrase, project.Body)
+		}
+	}
+	if len(project.Facts) != len(want.facts) {
+		t.Fatalf("facts = %+v", project.Facts)
+	}
+	for i, fact := range want.facts {
+		if project.Facts[i] != fact {
+			t.Fatalf("fact %d = %+v, want %+v", i, project.Facts[i], fact)
+		}
+	}
+}
+
+var paperTradingLibrary = paperTradingCopy{
+	summary: "Paper-only BTC research that scores a library of published strategies and only proposes ones that stay positive after fees out of sample and on a sealed holdout. No real money.",
+	bodyHas: []string{
+		"does not handle real money",
+		"10,000 paper accounts",
+		"library of 15 published, cited strategies",
+		"2017-08-17",
+		"v7b, dated 2026-10-29",
+		"2018-12-01 to 2025-09-30",
+		"2025-10-01 to 2026-10-01",
+		"lib.rsi2, lib.sma100, and lib.sma200",
+		"None of the three beat plain buy-and-hold",
+		"35,667 unique strategy candidates",
+		"all 127 earlier champions were retested and retired",
+	},
+	bodyNot: []string{
+		"ETH",
+		"Mint is a deterministic generator",
+		"18,867",
+		"Sharpe ratio of at least 0.30",
+	},
+	facts: []domain.Fact{
+		{Label: "Discovery", Value: "Library of 15 cited strategies on daily BTC"},
+		{Label: "Passed", Value: "3 of 15 as of 2026-10-29"},
+		{Label: "Gate", Value: "Positive net P&L after a 0.1% fee + 2 bps, out of sample from 2018-12-01 to 2025-09-30 and on a sealed holdout from 2025-10-01 to 2026-10-01, both still positive at 2x fees + 5 bps; at least 8 out-of-sample round trips and 2 holdout trades"},
+		{Label: "Earlier search", Value: "35,667 candidates tested before the library switch"},
+		{Label: "Markets", Value: "Paper-only BTC. No real money."},
+	},
+}
+
+var paperTradingMint = paperTradingCopy{
+	summary: "Paper-only BTC and ETH research. Strategies are generated, backtested, and kept only when they clear a frozen walk-forward gate. No real money.",
+	bodyHas: []string{
+		"The paper trading bot searches for BTC and ETH strategies on paper. It does not place real orders and it does not handle real money.",
+		"Mint is a deterministic generator. It builds AND-combinations of indicator conditions, at most seven conditions each, and it only adds a new family of conditions from peer-reviewed research. Farm is a set of stateless workers that lease candidates and backtest them.",
+		"A frozen walk-forward gate decides what may be called a pass: 23 out-of-sample windows covering about 5.7 years, at least 30 trades, a Sharpe ratio of at least 0.30, and a result that beats both a moving-average baseline and buy-and-hold.",
+		"As of 2026-10-27, 18,867 strategies had been backtested and 122 had passed, about 0.6 percent. When the gate was tightened in early October 2026, all 127 earlier champions were retested and retired. The gate is preferred over a longer list of winners.",
+		"The stack is Python (pandas, ccxt), a React dashboard, and k3s with Argo CD. Continuous integration builds the image and the deploy pins the commit. The project is built on virattt/ai-hedge-fund (MIT).",
+	},
+	facts: []domain.Fact{
+		{Label: "Backtested", Value: "18,867 strategies as of 2026-10-27"},
+		{Label: "Passed the gate", Value: "122 (about 0.6%)"},
+		{Label: "Retired champions", Value: "127 retested and retired when the gate was tightened in early October 2026"},
+		{Label: "Gate", Value: "23 out-of-sample windows over about 5.7 years; at least 30 trades; Sharpe at least 0.30; must beat a moving-average baseline and buy-and-hold"},
+		{Label: "Markets", Value: "Paper-only BTC and ETH. No real money."},
+	},
 }
 
 func openSeeded(t *testing.T) *Repository {
