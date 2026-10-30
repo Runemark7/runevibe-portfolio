@@ -311,7 +311,7 @@ func assertPaperTrading(t *testing.T, project domain.Project, want paperTradingC
 }
 
 var paperTradingBatch2 = paperTradingCopy{
-	summary: "Paper-only BTC research that scores a library of 32 published strategies and only proposes ones that stay positive after fees out of sample and on a sealed holdout. Six are seated as paper forward tests after a manual approval. No real money.",
+	summary: "Paper-only BTC research that scores a library of 32 published strategies and only proposes ones that stay positive after fees out of sample and on a sealed holdout. Six library passes are seated as paper forward tests after a manual approval. No real money.",
 	bodyHas: []string{
 		"does not handle real money",
 		"isolated paper account that starts at 10,000",
@@ -327,6 +327,8 @@ var paperTradingBatch2 = paperTradingCopy{
 		"lib.sma100 (SMA 100) is the other pass, and it stays an unproven forward test",
 		"35,667 unique strategy candidates",
 		"all 127 earlier champions were retested and retired",
+		"dip_234b and dip_240b, were admitted afterwards on 2026-10-09",
+		"so nine champions run in total",
 	},
 	bodyNot: []string{
 		"ETH",
