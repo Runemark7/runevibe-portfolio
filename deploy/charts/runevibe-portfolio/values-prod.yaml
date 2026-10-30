@@ -4,7 +4,7 @@ backend:
   image:
     repository: ghcr.io/runemark7/runevibe-portfolio-api
     pullPolicy: Always
-    tag: ac846dddc96284add1c3594ffab28576bf5824ed
+    tag: f37a76d45e125e7f0e286e0cb2c7d6787b194ce6
   imagePullSecrets:
     - name: ghcr-pull-secret
   env:
@@ -17,7 +17,7 @@ frontend:
   image:
     repository: ghcr.io/runemark7/runevibe-portfolio-frontend
     pullPolicy: Always
-    tag: ac846dddc96284add1c3594ffab28576bf5824ed
+    tag: f37a76d45e125e7f0e286e0cb2c7d6787b194ce6
   imagePullSecrets:
     - name: ghcr-pull-secret
 ingress:
