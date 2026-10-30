@@ -63,7 +63,7 @@ func TestSeedMatchesPortfolioRules(t *testing.T) {
 	if projects[2].LiveURL == nil || *projects[2].LiveURL != "https://trading.runevibe.se" {
 		t.Fatalf("paper trading live URL: %v", projects[2].LiveURL)
 	}
-	assertPaperTrading(t, projects[2], paperTradingLibrary)
+	assertPaperTrading(t, projects[2], paperTradingBatch2)
 
 	var votes string
 	for _, fact := range projects[0].Facts {
@@ -218,7 +218,7 @@ func TestRemoveWarehouseMigrationRoundTrip(t *testing.T) {
 	if len(projects) != 4 {
 		t.Fatalf("up left %d projects", len(projects))
 	}
-	assertPaperTrading(t, projects[2], paperTradingLibrary)
+	assertPaperTrading(t, projects[2], paperTradingBatch2)
 }
 
 func TestPaperTradingLibraryMigrationRoundTrip(t *testing.T) {
@@ -236,7 +236,7 @@ func TestPaperTradingLibraryMigrationRoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assertPaperTrading(t, projects[2], paperTradingLibrary)
+	assertPaperTrading(t, projects[2], paperTradingBatch2)
 
 	if err := m.Steps(-1); err != nil {
 		t.Fatalf("down: %v", err)
@@ -248,19 +248,28 @@ func TestPaperTradingLibraryMigrationRoundTrip(t *testing.T) {
 	if len(projects) != 4 || projects[2].Slug != "paper-trading-bot" || projects[2].SortOrder != 3 {
 		t.Fatalf("down changed project order: %+v", projects)
 	}
-	assertPaperTrading(t, projects[2], paperTradingMint)
+	assertPaperTrading(t, projects[2], paperTradingLibrary)
 	if _, err := repo.ProjectBySlug(ctx, "warehouse"); !errors.Is(err, ports.ErrNotFound) {
 		t.Fatalf("paper-trading down restored warehouse: %v", err)
 	}
 
-	if err := m.Steps(1); err != nil {
+	if err := m.Steps(-1); err != nil {
+		t.Fatalf("down to the mint copy: %v", err)
+	}
+	projects, err = repo.Projects(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertPaperTrading(t, projects[2], paperTradingMint)
+
+	if err := m.Steps(2); err != nil {
 		t.Fatalf("up: %v", err)
 	}
 	projects, err = repo.Projects(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}
-	assertPaperTrading(t, projects[2], paperTradingLibrary)
+	assertPaperTrading(t, projects[2], paperTradingBatch2)
 	if projects[0].Facts[0].Value != "3,957,311 as of 2026-10-24 (about 4 million)" {
 		t.Fatalf("riksdag fact changed: %+v", projects[0].Facts)
 	}
@@ -299,6 +308,42 @@ func assertPaperTrading(t *testing.T, project domain.Project, want paperTradingC
 			t.Fatalf("fact %d = %+v, want %+v", i, project.Facts[i], fact)
 		}
 	}
+}
+
+var paperTradingBatch2 = paperTradingCopy{
+	summary: "Paper-only BTC research that scores a library of 32 published strategies and only proposes ones that stay positive after fees out of sample and on a sealed holdout. Six are seated as paper forward tests after a manual approval. No real money.",
+	bodyHas: []string{
+		"does not handle real money",
+		"isolated paper account that starts at 10,000",
+		"library of 32 published, cited strategies",
+		"A second batch of 17 was added to the original 15.",
+		"2017-08-17",
+		"v7b, dated 2026-10-29",
+		"2018-12-01 to 2025-09-30",
+		"2025-10-01 to 2026-10-01",
+		"a pass is never seated on its own",
+		"all 32 library strategies have been tested and 7 pass",
+		"lib.rsi2 (RSI(2)), lib.sma200 (SMA 200), lib.ichimoku (Ichimoku), lib.rsi14 (RSI(14)), lib.tsmom180d (180-day time-series momentum), and lib.rsi2_10 (RSI(2) below 10)",
+		"lib.sma100 (SMA 100) is the other pass, and it stays an unproven forward test",
+		"35,667 unique strategy candidates",
+		"all 127 earlier champions were retested and retired",
+	},
+	bodyNot: []string{
+		"ETH",
+		"Mint is a deterministic generator",
+		"18,867",
+		"Sharpe ratio of at least 0.30",
+		"library of 15 published",
+		"3 of the 15",
+		"None of the three beat plain buy-and-hold",
+	},
+	facts: []domain.Fact{
+		{Label: "Discovery", Value: "Library of 32 cited strategies on daily BTC"},
+		{Label: "Passed", Value: "7 of 32 as of 2026-10-30"},
+		{Label: "Gate", Value: "Positive net P&L after a 0.1% fee + 2 bps, out of sample from 2018-12-01 to 2025-09-30 and on a sealed holdout from 2025-10-01 to 2026-10-01, both still positive at 2x fees + 5 bps; at least 8 out-of-sample round trips and 2 holdout trades"},
+		{Label: "Earlier search", Value: "35,667 candidates tested before the library switch"},
+		{Label: "Markets", Value: "Paper-only BTC. No real money."},
+	},
 }
 
 var paperTradingLibrary = paperTradingCopy{
