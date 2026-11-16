@@ -80,6 +80,9 @@ func TestSeedMatchesPortfolioRules(t *testing.T) {
 	if !strings.Contains(projects[0].Body, "Ingestion runs daily") || !strings.Contains(projects[0].Body, "freshness alerting") || !strings.Contains(projects[0].Body, "2002/03") {
 		t.Fatalf("riksdagskollen body missing ingestion wording: %s", projects[0].Body)
 	}
+	if !strings.Contains(projects[0].Body, "party comparison") {
+		t.Fatalf("riksdagskollen body missing party comparison: %s", projects[0].Body)
+	}
 	if _, err := repo.ProjectBySlug(ctx, "warehouse"); !errors.Is(err, ports.ErrNotFound) {
 		t.Fatalf("warehouse must not be featured: %v", err)
 	}
