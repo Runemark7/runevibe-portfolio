@@ -242,6 +242,17 @@ func TestPaperTradingLibraryMigrationRoundTrip(t *testing.T) {
 	assertPaperTrading(t, projects[2], paperTradingLibrary251)
 
 	if err := m.Steps(-1); err != nil {
+		t.Fatalf("down from the party comparison copy: %v", err)
+	}
+	projects, err = repo.Projects(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(projects[0].Body, "party comparison") || !strings.Contains(projects[0].Body, "party scorecards, a decisions feed") {
+		t.Fatalf("000007 down did not restore the riksdagskollen body: %s", projects[0].Body)
+	}
+
+	if err := m.Steps(-1); err != nil {
 		t.Fatalf("down: %v", err)
 	}
 	projects, err = repo.Projects(ctx)
