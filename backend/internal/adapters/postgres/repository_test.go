@@ -83,6 +83,9 @@ func TestSeedMatchesPortfolioRules(t *testing.T) {
 	if !strings.Contains(projects[0].Body, "party comparison") {
 		t.Fatalf("riksdagskollen body missing party comparison: %s", projects[0].Body)
 	}
+	if !strings.Contains(projects[0].Body, "vote agreement matrix") {
+		t.Fatalf("riksdagskollen body missing vote agreement matrix: %s", projects[0].Body)
+	}
 	if _, err := repo.ProjectBySlug(ctx, "warehouse"); !errors.Is(err, ports.ErrNotFound) {
 		t.Fatalf("warehouse must not be featured: %v", err)
 	}
@@ -242,6 +245,17 @@ func TestPaperTradingLibraryMigrationRoundTrip(t *testing.T) {
 	assertPaperTrading(t, projects[2], paperTradingLibrary251)
 
 	if err := m.Steps(-1); err != nil {
+		t.Fatalf("down from the vote agreement copy: %v", err)
+	}
+	projects, err = repo.Projects(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(projects[0].Body, "vote agreement matrix") || !strings.Contains(projects[0].Body, "party comparison") {
+		t.Fatalf("000008 down did not restore the 000007 riksdagskollen body: %s", projects[0].Body)
+	}
+
+	if err := m.Steps(-1); err != nil {
 		t.Fatalf("down from the party comparison copy: %v", err)
 	}
 	projects, err = repo.Projects(ctx)
@@ -285,7 +299,7 @@ func TestPaperTradingLibraryMigrationRoundTrip(t *testing.T) {
 	}
 	assertPaperTrading(t, projects[2], paperTradingMint)
 
-	if err := m.Steps(3); err != nil {
+	if err := m.Steps(4); err != nil {
 		t.Fatalf("up: %v", err)
 	}
 	projects, err = repo.Projects(ctx)
